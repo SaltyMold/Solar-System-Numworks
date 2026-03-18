@@ -1,4 +1,7 @@
 #include "compute.h"
+#include "libs/eadk.h"
+
+uint32_t dt = DEFAULT_DT;
 
 planet_t planets[PLANETS] = {
     {0, 0, 0, 0, 0, 0, 1.989e30}, // Sun
