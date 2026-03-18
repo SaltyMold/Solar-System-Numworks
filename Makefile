@@ -24,8 +24,8 @@ endef
 
 src = $(addprefix src/,\
   libs/storage.c \
-  renderer.c \
   compute.c \
+  renderer.c \
   tools.c \
   main.c \
 )
@@ -37,6 +37,7 @@ CFLAGS += -ggdb
 LDFLAGS = -Wl,--relocatable
 LDFLAGS += -nostartfiles
 LDFLAGS += --specs=nano.specs
+LDFLAGS += -lm
 # LDFLAGS += --specs=nosys.specs # Alternatively, use full-fledged newlib
 
 ifeq ($(LINK_GC),1)
@@ -78,7 +79,7 @@ $(BUILD_DIR_BUILD)/%.elf: $(BUILD_DIR_BUILD)/%.nwa sim/input.bin
 
 $(BUILD_DIR_BUILD)/app.nwa: $(call object_for_dir,$(BUILD_DIR_BUILD),$(src)) $(BUILD_DIR_BUILD)/icon.o
 	@echo "LD      $@"
-	$(Q) $(CC) $(CFLAGS) $(LDFLAGS) $^ -o $@
+	$(Q) $(CC) $(CFLAGS) $^ $(LDFLAGS) -o $@
 
 # Windows-test build: produce a DLL with mingw
 $(BUILD_DIR_TEST)/app.dll: $(call object_for_dir,$(BUILD_DIR_TEST),$(src)) sim/libepsilon.a

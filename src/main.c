@@ -24,24 +24,50 @@ int main(void) {
         }
 
         // ===== UNDISPLAY =====
-        for (int i = 0; i < 9; i++) {
+        for (int i = 0; i < PLANETS; i++) {
             undisplay_planet(planets[i].x, planets[i].y);
         }
 
         // ===== COMPUTE =====
+        for (int i = 0; i < PLANETS; i++) {
+            planets[i].ax = 0;
+            planets[i].ay = 0;
+        }
 
-        
-        
+        for (int i = 0; i < PLANETS; i++) {
+            for (int j = 0; j < PLANETS; j++) {
+                if (i == j) continue;
+
+                double dx = planets[j].x - planets[i].x;
+                double dy = planets[j].y - planets[i].y;
+                double distance = sqrt((double)(dx * dx + dy * dy));
+                double force = compute_gravity_force(planets[i].mass, planets[j].mass, distance);
+
+                planets[i].ax += force * dx / (distance * planets[i].mass);
+                planets[i].ay += force * dy / (distance * planets[i].mass);
+            }
+        }
+
+        for (int64_t i = 0; i < PLANETS; i++) {
+            planets[i].vx += planets[i].ax * DT;
+            planets[i].vy += planets[i].ay * DT;
+            
+            planets[i].x += planets[i].vx * DT;
+            planets[i].y += planets[i].vy * DT;
+        }
 
         // ===== DISPLAY =====
-        for (int i = 0; i < 9; i++) {
+        for (int i = 0; i < PLANETS; i++) {
+            if (planets[i].x * SCREEN_RATIO + 160 < 0 || planets[i].x * SCREEN_RATIO + 160 >= EADK_SCREEN_WIDTH || planets[i].y * SCREEN_RATIO + 120 < 0 || planets[i].y * SCREEN_RATIO + 120 >= EADK_SCREEN_HEIGHT) {
+                continue; 
+            }
             display_planet(planets[i].x, planets[i].y);
         }
 
         #if SIM
         eadk_keyboard_scan();
         #endif
-        eadk_timing_msleep(10);
+        eadk_timing_msleep(1);
     }
 
     return 0;
